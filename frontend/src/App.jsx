@@ -142,6 +142,9 @@ export default function App() {
                   {game.status === 'won' ? 'You Won! 🎉' : 'You Lost!'}
                 </p>
                 <p className="answer">The word was: {game.answer.toUpperCase()}</p>
+                <button className="new-game-btn" onClick={() => setGame(null)}>
+                  Play Again
+                </button>
               </div>
             ) : (
               <Keyboard

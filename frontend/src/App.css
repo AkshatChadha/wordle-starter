@@ -215,9 +215,9 @@ body {
 
 .start-btn {
   padding: 10px 32px;
-  background: var(--text);
-  color: var(--bg);
-  border: none;
+  background: transparent;
+  color: var(--text);
+  border: 1px solid var(--border);
   font-family: 'IBM Plex Mono', monospace;
   font-size: 0.85rem;
   font-weight: 700;
@@ -227,11 +227,9 @@ body {
   transition: opacity 0.15s;
 }
 
-.start-btn:hover { opacity: 0.85; }
+.start-btn:hover { border-color: var(--text); }
+.start-btn:focus { outline: 1px; }
 
-.start-btn:focus {
-  outline: none;
-}
 /* Messages */
 .message {
   font-size: 0.8rem;
