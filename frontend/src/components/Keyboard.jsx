@@ -12,8 +12,9 @@ export default function Keyboard({ letterStates, onKey }) {
           {row.map((key) => (
             <button
               key={key}
-              className={`key ${key.length > 1 ? 'wide' : ''} ${letterStates[key] ?? ''}`}
+              className={`key ${key.length > 1 ? 'wide' : ''} ${key.length === 1 ? (letterStates[key] ?? '') : ''}`}
               onClick={() => onKey(key)}
+              aria-label={key === '⌫' ? 'Backspace' : undefined}
             >
               {key}
             </button>

@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useMemo } from 'react'
 import './App.css'
 import Board from './components/Board'
 import Keyboard from './components/Keyboard'
@@ -13,37 +13,44 @@ export default function App() {
 
   // API Calls 
   async function startGame() {
-    const res = await fetch(`${API_URL}/games`, {
+    try{
+      const res = await fetch(`${API_URL}/games`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ word_length: wordLength }),
-    })
-    const data = await res.json()
-    setGame(data)
-    setCurrentInput('')
-    setError('')
+      })
+      const data = await res.json()
+      setGame(data)
+      setCurrentInput('')
+      setError('')
+    } catch(e){
+      setError('Failed to connect to server')
+    }
   }
 
-  async function submitGuess() {
+  const submitGuess = useCallback(async () => {
     if (currentInput.length !== game.word_length) return
     setError('')
 
-    const res = await fetch(`${API_URL}/games/${game.id}/guesses`, {
+    try{
+      const res = await fetch(`${API_URL}/games/${game.id}/guesses`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ word: currentInput }),
-    })
+      })
 
-    const data = await res.json()
+      const data = await res.json()
 
-    if (!res.ok) {
-      setError(data.detail)
-      return
-    }
-
-    setGame(data)
-    setCurrentInput('')
-  }
+      if (!res.ok) {
+        setError(data.detail)
+        return
+      }
+      setGame(data)
+      setCurrentInput('')
+    } catch (e) {
+      setError('Failed to connect to server')
+    } 
+  }, [game, currentInput])
 
   // Key Handler 
   const handleKey = useCallback((key) => {
@@ -68,7 +75,7 @@ export default function App() {
       setError('')
       setCurrentInput(prev => prev + key.toLowerCase())
     }
-  }, [game, currentInput])
+  }, [game, currentInput, submitGuess])
 
   // Physical Keyboard
   useEffect(() => {
@@ -80,7 +87,7 @@ export default function App() {
 }, [handleKey])
 
   // Letter States for Keyboard 
-  function getLetterStates() {
+  const letterStates = useMemo(() => {
     if (!game) return {}
     const states = {}
     const priority = { green: 3, yellow: 2, gray: 1 }
@@ -94,14 +101,14 @@ export default function App() {
       })
     }
     return states
-  }
+  }, [game])
 
   // Render 
   return (
     <div className="app">
       <header className="header">
         {game && (
-          <button className="back-btn" onClick={() => setGame(null)}>
+          <button className="back-btn" onClick={() => setGame(null)} aria-label="Back">
             ←
           </button>
         )}
@@ -132,7 +139,7 @@ export default function App() {
             wordLength={game.word_length}
             maxGuesses={game.max_guesses}
             guesses={game.guesses}
-            currentInput={currentInput}
+            currentInput={game.status === 'in_progress' ? currentInput : ''}
           />
           {error && <p className="message error">{error}</p>}
           <div className="bottom-section">
@@ -148,7 +155,7 @@ export default function App() {
               </div>
             ) : (
               <Keyboard
-                letterStates={getLetterStates()}
+                letterStates={letterStates}
                 onKey={handleKey}
               />
             )}
