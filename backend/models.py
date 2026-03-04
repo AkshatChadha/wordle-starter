@@ -1,11 +1,11 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from typing import Literal
 
 
 # Requests
 
 class GameRequest(BaseModel):
-    word_length: int
+    word_length: int = Field(..., ge = 5, le = 8)
 
 
 class GuessRequest(BaseModel):

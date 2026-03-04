@@ -1,9 +1,9 @@
 import uuid
-from models import GameStateResponse, GuessResponse
+from models import GameStateResponse, GuessResponse, LetterFeedback
 from words import get_random_answer, is_valid_guess
 
 
-# In memory store
+# In memory store (Ideally this would be a SQL db)
 games: dict[str, dict] = {}
 
 
@@ -20,6 +20,7 @@ def create_game(word_length: int) -> GameStateResponse:
         "max_guesses": word_length + 1,
         "answer": answer,
         "guesses": [],
+        "guessed_words": {},
         "status": "in_progress",
     }
 
@@ -43,13 +44,14 @@ def submit_guess(game_id: str, word: str) -> GameStateResponse:
     if not is_valid_guess(word, game["word_length"]):
         raise ValueError("Not a valid word")
     
-    already_guessed = [g['word'] for g in game['guesses']]
-    if word in already_guessed:
+    
+    if word in game["guessed_words"]:
         raise ValueError('You already guessed that word')
 
     feedback = _get_feedback(word, game["answer"])
 
     game["guesses"].append({"word": word, "feedback": feedback})
+    game["guessed_words"].add(word)
 
     if word == game["answer"]:
         game["status"] = "won"
@@ -69,7 +71,7 @@ def get_game(game_id: str) -> GameStateResponse:
     return _to_response(game)
 
 
-def _get_feedback(guess: str, answer: str) -> list[str]:
+def _get_feedback(guess: str, answer: str) -> list[LetterFeedback]:
 
     # Start with all grays
     feedback = ["gray"] * len(guess)
