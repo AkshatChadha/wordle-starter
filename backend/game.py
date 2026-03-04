@@ -20,7 +20,7 @@ def create_game(word_length: int) -> GameStateResponse:
         "max_guesses": word_length + 1,
         "answer": answer,
         "guesses": [],
-        "guessed_words": {},
+        "guessed_words": set(),
         "status": "in_progress",
     }
 
