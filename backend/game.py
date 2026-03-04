@@ -42,6 +42,10 @@ def submit_guess(game_id: str, word: str) -> GameStateResponse:
 
     if not is_valid_guess(word, game["word_length"]):
         raise ValueError("Not a valid word")
+    
+    already_guessed = [g['word'] for g in game['guesses']]
+    if word in already_guessed:
+        raise ValueError('You already guessed that word')
 
     feedback = _get_feedback(word, game["answer"])
 
