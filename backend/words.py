@@ -38,4 +38,4 @@ def get_random_answer(length: int) -> str:
 
 def is_valid_guess(word: str, length: int) -> bool:
     """Check if a word is a valid guess for the given length."""
-    return word.lower() in guesses_by_length[length]
+    return word.lower() in guesses_by_length.get(length,set())
