@@ -1,7 +1,7 @@
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 
-from models import CreateGameRequest, GuessRequest, GameStateResponse
+from models import GameRequest, GuessRequest, GameStateResponse
 from game import create_game, submit_guess, get_game
 
 
@@ -17,17 +17,12 @@ app.add_middleware(
 )
 
 
-@app.get("/")
-def read_root():
-    return {"message": "Hello World"}
-
-
 @app.get("/health")
 def health_check():
     return {"status": "healthy"}
 
 @app.post("/games", response_model=GameStateResponse)
-def create_game_endpoint(request: CreateGameRequest):
+def create_game_endpoint(request: GameRequest):
     try:
         return create_game(request.word_length)
     except ValueError as e:
