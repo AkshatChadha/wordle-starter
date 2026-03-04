@@ -10,9 +10,12 @@ export default function App() {
   const [currentInput, setCurrentInput] = useState('')
   const [wordLength, setWordLength] = useState(5)
   const [error, setError] = useState('')
+  const [isLoading, setIsLoading] = useState(false)
+
 
   // API Calls 
   async function startGame() {
+    setIsLoading(true)
     try{
       const res = await fetch(`${API_URL}/games`, {
       method: 'POST',
@@ -25,18 +28,20 @@ export default function App() {
       setError('')
     } catch(e){
       setError('Failed to connect to server')
+    } finally{
+      setIsLoading(false)
     }
   }
 
-  const submitGuess = useCallback(async () => {
-    if (currentInput.length !== game.word_length) return
+  async function submitGuess(gameState, input) {
+    setIsLoading(true)
     setError('')
 
     try{
-      const res = await fetch(`${API_URL}/games/${game.id}/guesses`, {
+      const res = await fetch(`${API_URL}/games/${gameState.id}/guesses`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ word: currentInput }),
+      body: JSON.stringify({ word: input }),
       })
 
       const data = await res.json()
@@ -49,12 +54,14 @@ export default function App() {
       setCurrentInput('')
     } catch (e) {
       setError('Failed to connect to server')
-    } 
-  }, [game, currentInput])
+    } finally {
+      setIsLoading(false)
+    }
+  }
 
   // Key Handler 
   const handleKey = useCallback((key) => {
-    if (!game || game.status !== 'in_progress') return
+    if (!game || game.status !== 'in_progress' || isLoading) return
 
     if (key === '⌫' || key === 'Backspace') {
       setError('')
@@ -67,7 +74,7 @@ export default function App() {
         setError('Not enough letters')
         return
       }
-      submitGuess()
+      submitGuess(game,currentInput)
       return
     }
 
@@ -75,7 +82,7 @@ export default function App() {
       setError('')
       setCurrentInput(prev => prev + key.toLowerCase())
     }
-  }, [game, currentInput, submitGuess])
+  }, [game, currentInput, isLoading])
 
   // Physical Keyboard
   useEffect(() => {
@@ -129,7 +136,7 @@ export default function App() {
               </button>
             ))}
           </div>
-          <button className="start-btn" onClick={startGame}>
+          <button className="outline-btn" onClick={startGame} disabled={isLoading}>
             Start Game
           </button>
         </div>
@@ -149,7 +156,7 @@ export default function App() {
                   {game.status === 'won' ? 'You Won! 🎉' : 'You Lost!'}
                 </p>
                 <p className="answer">The word was: {game.answer.toUpperCase()}</p>
-                <button className="new-game-btn" onClick={() => setGame(null)}>
+                <button className="outline-btn" onClick={() => setGame(null)}>
                   Play Again
                 </button>
               </div>

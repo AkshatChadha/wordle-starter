@@ -212,7 +212,7 @@ body {
   outline: 2px solid var(--border-active);
 }
 
-.start-btn {
+.outline-btn {
   padding: 10px 32px;
   background: transparent;
   color: var(--text);
@@ -226,8 +226,8 @@ body {
   transition: opacity 0.15s;
 }
 
-.start-btn:hover { border-color: var(--text); }
-.start-btn:focus-visible { outline: 2px solid var(--border-active); }
+.outline-btn:hover { border-color: var(--text); }
+.outline-btn:focus-visible { outline: 2px solid var(--border-active); }
 
 /* Messages */
 .message {
@@ -260,21 +260,7 @@ body {
   margin-bottom: 16px;
 }
 
-.new-game-btn {
-  padding: 10px 32px;
-  background: transparent;
-  color: var(--text);
-  border: 1px solid var(--border);
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 0.8rem;
-  font-weight: 700;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  cursor: pointer;
-  transition: all 0.15s;
-}
 
-.new-game-btn:hover { border-color: var(--text); }
 
 .bottom-section {
   width: 100%;
