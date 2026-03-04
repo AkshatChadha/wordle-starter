@@ -1,42 +1,289 @@
-#root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@700&family=Playfair+Display:wght@700&display=swap');
+
+:root {
+  --bg: #121213;
+  --surface: #1a1a1b;
+  --border: #3a3a3c;
+  --border-active: #565758;
+  --text: #ffffff;
+  --muted: #818384;
+  --green: #538d4e;
+  --yellow: #b59f3b;
+  --gray: #3a3a3c;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background-color: var(--bg);
+  color: var(--text);
+  font-family: 'IBM Plex Mono', monospace;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.app {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 500px;
+  min-height: 100vh;
+  justify-content: center;
+}
+
+/* Header */
+.header {
+  width: 100%;
+  padding: 16px 0 12px;
   text-align: center;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 24px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.back-btn {
+  position: absolute;
+  left: 0;
+  background: transparent;
+  border: none;
+  color: var(--muted);
+  font-size: 2.0rem;
+  cursor: pointer;
+  padding: 4px 8px;
+  transition: color 0.15s;
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+.back-btn:hover { color: var(--text); }
+.back-btn:focus { outline: none; }
+
+.header h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: 2rem;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
 }
 
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+/* Tile */
+.tile {
+  aspect-ratio: 1;
+  width: 100%;
+  min-height: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid;
+  font-family: 'IBM Plex Mono', monospace;
+  font-weight: 700;
+  font-size: clamp(16px, 5vw, 32px);
+  user-select: none;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
+.tile--empty  { border-color: var(--border);        background: transparent; color: var(--text); }
+.tile--active { border-color: var(--border-active); background: transparent; color: var(--text); }
+.tile--green  { border-color: var(--green);         background: var(--green);  color: #ffffff; }
+.tile--yellow { border-color: var(--yellow);        background: var(--yellow); color: #ffffff; }
+.tile--gray   { border-color: var(--gray);          background: var(--gray);   color: #ffffff; }
+
+.tile--revealed {
+  animation: flip 0.5s ease forwards;
 }
 
-.card {
-  padding: 2em;
+@keyframes flip {
+  0%   { transform: rotateX(0deg); }
+  50%  { transform: rotateX(-90deg); }
+  100% { transform: rotateX(0deg); }
 }
 
-.read-the-docs {
-  color: #888;
+/* Board */
+.board {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 24px;
+  width: 100%;
+  width: 350px;
+  padding: 0 12px;
+  margin-left: auto;
+  margin-right: auto;
+  flex-shrink: 0;
+}
+
+.board-row {
+  display: grid;
+  grid-template-columns: repeat(var(--word-length), 1fr);
+  gap: 6px;
+  width: 100%;
+}
+
+/* Keyboard */
+.keyboard {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: center;
+  margin-bottom: 24px;
+  width: 100%
+}
+
+.keyboard-row {
+  display: flex;
+  gap: 6px;
+}
+
+.key {
+  height: 58px;
+  min-width: 43px;
+  padding: 0 8px;
+  border: none;
+  border-radius: 4px;
+  background: var(--muted);
+  color: var(--text);
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.8rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.15s;
+  text-transform: uppercase;
+}
+
+.key.wide   { min-width: 65px; }
+.key.green  { background: var(--green); }
+.key.yellow { background: var(--yellow); }
+.key.gray   { background: var(--gray); }
+.key:hover  { opacity: 0.85; }
+
+/* New Game */
+.new-game {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 28px;
+}
+
+.new-game-label {
+  font-size: 0.75rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+
+.length-selector {
+  display: flex;
+  gap: 8px;
+}
+
+.length-btn {
+  width: 40px;
+  height: 40px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--muted);
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.15s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.length-btn:hover {
+  border-color: #565758;
+  color: #565758;
+}
+
+.length-btn.selected {
+  border-color: var(--text);
+  color: var(--text);
+  background: var(--surface);
+}
+.length-btn:focus {
+  outline: none;
+}
+
+.start-btn {
+  padding: 10px 32px;
+  background: var(--text);
+  color: var(--bg);
+  border: none;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+
+.start-btn:hover { opacity: 0.85; }
+
+.start-btn:focus {
+  outline: none;
+}
+/* Messages */
+.message {
+  font-size: 0.8rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-bottom: 16px;
+  min-height: 20px;
+}
+
+.message.error { color: #ff6b6b; }
+
+/* Game Over  */
+.game-over {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.game-over .result {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.4rem;
+  margin-bottom: 8px;
+}
+
+.game-over .answer {
+  font-size: 0.8rem;
+  letter-spacing: 0.15em;
+  color: var(--muted);
+  text-transform: uppercase;
+  margin-bottom: 16px;
+}
+
+.new-game-btn {
+  padding: 10px 32px;
+  background: transparent;
+  color: var(--text);
+  border: 1px solid var(--border);
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.new-game-btn:hover { border-color: var(--text); }
+
+.bottom-section {
+  width: 100%;
+  min-height: 230px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
